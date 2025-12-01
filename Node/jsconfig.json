@@ -1,0 +1,75 @@
+{
+    "compilerOptions": {
+        "checkJs": true,
+        "allowJs": true,
+        "baseUrl": ".",
+        "paths": {
+            "@configs/*": [
+                "./src/configs/*"
+            ],
+            "@exceptions/*": [
+                "./src/exceptions/*"
+            ],
+            "@enums/*": [
+                "./src/enums/*"
+            ],
+            "@hooks/*": [
+                "./src/hooks/*"
+            ],
+            "@engines/*": [
+                "./src/engines/*"
+            ],
+            "@events/*": [
+                "src/engines/events/*"
+            ],
+            "@jobs/*": [
+                "./src/jobs/*"
+            ],
+            "@logs/*": [
+                "./src/logs/*"
+            ],
+            "@constants/*": [
+                "./src/constants/*"
+            ],
+            "@handler/*": [
+                "./src/handler/*"
+            ],
+            "@controllers/*": [
+                "./src/controllers/*"
+            ],
+            "@middleware/*": [
+                "./src/middleware/*"
+            ],
+            "@databases/*": [
+                "./src/databases/*"
+            ],
+            "@models/*": [
+                "./src/models/*"
+            ],
+            "@routers/*": [
+                "./src/routers/*"
+            ],
+            "@services/*": [
+                "./src/services/*"
+            ],
+            "@helpers/*": [
+                "./src/helpers/*"
+            ],
+            "@utils/*": [
+                "./src/utils/*"
+            ],
+            "@features/*": [
+                "./src/features/*"
+            ],
+            "@shared/*": [
+                "./src/shared/*"
+            ],
+            "@settings/*": [
+                "./src/settings/*"
+            ],
+            "src/*": [
+                "./src/*"
+            ]
+        }
+    }
+}

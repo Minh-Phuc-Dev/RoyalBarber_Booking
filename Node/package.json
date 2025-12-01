@@ -1,0 +1,69 @@
+{
+  "name": "royal-barber-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Royal Barber Shop",
+  "main": "server.js",
+  "scripts": {
+    "start": "node --env-file=.env --watch server.js",
+    "dev": "node --env-file=.env --watch server.js"
+  },
+  "keywords": [
+    "barber",
+    "shop",
+    "api",
+    "nodejs",
+    "express",
+    "postgresql"
+  ],
+  "author": "Royal Barber Team",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.19.2",
+    "express-rate-limit": "^6.10.0",
+    "express-validator": "^7.0.1",
+    "helmet": "^7.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "module-alias": "^2.2.3",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.10.1",
+    "openai": "^6.9.1",
+    "pg": "^8.16.3",
+    "sequelize": "^6.37.7",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "jest": "^29.6.2",
+    "nodemon": "^3.0.1",
+    "supertest": "^6.3.3"
+  },
+  "_moduleAliases": {
+    "src": "src/",
+    "@exceptions": "src/exceptions",
+    "@features": "src/features",
+    "@settings": "src/settings",
+    "@jobs": "src/jobs",
+    "@enums": "src/enums",
+    "@engines": "src/engines",
+    "@hooks": "src/hooks",
+    "@events": "src/events",
+    "@logs": "src/logs",
+    "@constants": "src/constants",
+    "@configs": "src/configs",
+    "@handler": "src/handler",
+    "@controllers": "src/controllers",
+    "@middleware": "src/middleware",
+    "@databases": "src/databases",
+    "@models": "src/models",
+    "@routers": "src/routers",
+    "@services": "src/services",
+    "@helpers": "src/helpers",
+    "@utils": "src/utils",
+    "@shared": "src/shared",
+    "@validations": "src/validations"
+  }
+}

@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.6;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+  }
+}
+
+@layer components {
+
+
+  .btn-primary {
+    @apply bg-primary-500 hover:bg-primary-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+  }
+  
+  .btn-secondary {
+    @apply bg-white hover:bg-gray-50 text-primary-600 font-semibold py-3 px-6 rounded-lg border-2 border-primary-500 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+  }
+  
+  .card {
+    @apply bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1;
+  }
+  
+  .gradient-bg {
+    background: linear-gradient(135deg, #f59332 0%, #e35d05 100%);
+  }
+  
+  .glass-effect {
+    @apply bg-white/80 backdrop-blur-sm border border-white/20;
+  }
+  
+  /* Tablet-specific responsive utilities */
+  .tablet-grid-2 {
+    @apply grid-cols-1 md:grid-cols-2 lg:grid-cols-2;
+  }
+  
+  .tablet-grid-3 {
+    @apply grid-cols-1 md:grid-cols-2 lg:grid-cols-3;
+  }
+  
+  .tablet-text-responsive {
+    @apply text-sm md:text-base lg:text-lg;
+  }
+  
+  .tablet-padding {
+    @apply px-4 md:px-6 lg:px-8;
+  }
+  
+  .tablet-margin {
+    @apply mx-4 md:mx-6 lg:mx-8;
+  }
+}
+
+@layer utilities {
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .bg-pattern {
+    background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0);
+    background-size: 20px 20px;
+  }
+  
+  /* Tablet responsive breakpoint utilities */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .tablet-only-block {
+      display: block !important;
+    }
+    
+    .tablet-only-hidden {
+      display: none !important;
+    }
+    
+    .tablet-text-center {
+      text-align: center !important;
+    }
+    
+    .tablet-flex-col {
+      flex-direction: column !important;
+    }
+    
+    .tablet-w-full {
+      width: 100% !important;
+    }
+  }
+}
