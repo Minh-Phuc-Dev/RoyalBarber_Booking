@@ -13,6 +13,15 @@ class DashboardController {
     }
 
     /**
+     * Get Reports
+     * @param request
+     * @param response
+     */
+    static async getReports(request, response) {
+        (await DashboardService.getReports(request.query.timeRange)).send(response)
+    }
+
+    /**
      * Get Customers
      * @param request
      * @param response

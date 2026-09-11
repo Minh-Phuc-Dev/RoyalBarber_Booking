@@ -1,8 +1,11 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import CalendarPicker from "@src/components/Shared/Calendar";
 import { useBookingSlots } from '@src/hooks/UseBookingSlots';
+import { useSettings } from '@src/hooks/UseSettings';
 import { formatDateValue, formatDay, generate30MinuteSlots } from "@src/utils";
+import { isEmpty } from 'lodash';
 import { Calendar, ChevronsUpDown } from 'lucide-react';
+import { useMemo } from 'react';
 
 import { twMerge } from "tailwind-merge";
 
@@ -10,9 +13,30 @@ import { twMerge } from "tailwind-merge";
 
 
 const DateTimeSelection = ({ booking, onTimeSelect, onDateSelect }) => {
+
+
+    const {loading: settingsLoading, settings} = useSettings();
+
+    const [startHour, endHour] = useMemo(
+        () => {
+
+            const date = new Date(booking?.date);
+  
+            const day = date.getDay();
+
+            if(day === 0 || day === 6){
+                return (settings.weekend ?? "08:00-21:00").split('-'); 
+            }
+
+            return (settings.weekdays ?? "08:00-21:00").split('-');
+        },
+        [settings, booking.date]
+    )
+
+
     const slots = generate30MinuteSlots(
-        "08:00",
-        "23:00"
+        startHour,
+        endHour
     );
 
 
@@ -59,7 +83,7 @@ const DateTimeSelection = ({ booking, onTimeSelect, onDateSelect }) => {
                 </div>
 
                 {
-                    loading ? null : (
+                    (loading || settingsLoading) ? null : (
                         <div className="space-y-4">
                             <div className="grid grid-cols-4 row-span-2">
                                 {

@@ -69,7 +69,7 @@ class BookingController {
     static async getMyBookings(request, response) {
         (
             await BookingService.getByUserId(
-                AuthenticateContext.getStore().user
+                AuthenticateContext.getStore().id
             )
         ).send(response)
     }

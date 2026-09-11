@@ -40,7 +40,7 @@ router.get(
 router.get(
     "/mine/bookings",
     authenticate,
-    wrapperAsyncHandler(BookingController.getAllBookings)
+    wrapperAsyncHandler(BookingController.getMyBookings)
 )
 
 router.get(

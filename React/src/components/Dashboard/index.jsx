@@ -215,16 +215,20 @@ function Dashboard() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
 
-                <div className="rounded-2xl border border-gray-100 shadow-sm bg-white p-6 flex flex-col gap-4">
+                <div className="rounded-2xl border border-gray-100 shadow-sm bg-white p-6 flex flex-col gap-4 overflow-x-hidden">
                     <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2 font-semibold text-gray-900">
                             <BarChart3 className="w-5 h-5 text-[#FF8800]" />
                             Doanh Thu
                         </div>
                     </div>
-                    <div className="grow flex flex-col gap-2">
+                    <div className="grow flex flex-col gap-2 overflow-x-hidden">
                         {
-                            revenueCharts.map(
+                            isEmpty(revenueCharts) ? (
+                                <div>
+                                    <p className="text-center opacity-50">Chưa có dữ liệu!</p>
+                                </div>
+                            ) : revenueCharts.map(
                                 (item, index, values) => {
                                     const color = randomHexColor()
                                     return (
@@ -236,7 +240,7 @@ function Dashboard() {
                                                     style={{ backgroundColor: color, width: `${item.value / values.reduce((total, item) => total + item.value, 0) * 100}%` }}
                                                 />
                                             </div>
-                                            <div className="w-14 text-right text-gray-700 font-semibold">{formatPrice(item.value)}</div>
+                                            <div className="w-20 flex-none text-right text-gray-700 font-semibold">{formatPrice(item.value)}</div>
                                         </div>
                                     )
                                 }

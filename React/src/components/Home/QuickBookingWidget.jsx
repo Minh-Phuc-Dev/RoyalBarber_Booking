@@ -1,9 +1,12 @@
-import { useServices } from "@src/hooks/UseServices.jsx";
+import { useAvailableServices } from "@src/hooks/UseAvailableServices";
+import { isEmpty } from "lodash";
 import { ArrowRight, Calendar, Clock, Phone, User } from 'lucide-react';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { toast } from "sonner";
 
 const QuickBookingWidget = () => {
+    const location = useLocation();
     const [formData, setFormData] = useState({
         service: '',
         date: '',
@@ -11,7 +14,7 @@ const QuickBookingWidget = () => {
         name: '',
         phone: ''
     });
-    const { services, loading } = useServices()
+    const { services, loading } = useAvailableServices();
 
 
     const timeSlots = [
@@ -29,10 +32,27 @@ const QuickBookingWidget = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Handle form submission
-        console.log('Booking data:', formData);
-        alert('Đặt lịch thành công! Chúng tôi sẽ liên hệ với bạn sớm nhất.');
+        toast.success('Đặt lịch thành công! Chúng tôi sẽ liên hệ với bạn sớm nhất.');
     };
+
+    useEffect(() => {
+        const hash = location.hash
+        if (isEmpty(hash)) {
+            return
+        }
+
+        setTimeout(
+            () => {
+                const element = document.querySelector(hash)
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' })
+                }
+
+            }, 1000
+        )
+
+
+    }, [location.hash])
 
     if (loading) {
         return (
@@ -80,7 +100,7 @@ const QuickBookingWidget = () => {
     }
 
     return (
-        <section className="py-12 md:py-16 lg:py-20 bg-secondary-800 relative overflow-hidden">
+        <section id="quick-book" className="py-12 md:py-16 lg:py-20 bg-secondary-800 relative overflow-hidden">
             {/* Background Pattern */}
             <div className="absolute inset-0 bg-pattern opacity-5"></div>
 

@@ -1,6 +1,6 @@
 import { PAYMENT_METHODS } from '@src/enums';
-import { usePromotions } from '@src/hooks/UsePromotions';
-import { formatDate, formatPrice } from '@src/utils';
+import { useAvailablePromotions } from '@src/hooks/UseAvailablePromotions';
+import { formatDate, formatDay, formatPrice } from '@src/utils';
 import { isEmpty } from 'lodash';
 import { Calendar, CheckCircle, Clock, Mail, MapPin, Phone, Star, User } from 'lucide-react';
 import { useState } from 'react';
@@ -12,7 +12,7 @@ const BookingConfirmation = ({ booking, onConfirm, onPrevious, onVoucherSelect }
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isConfirmed, setIsConfirmed] = useState(false);
 
-    const { promotions, loading } = usePromotions()
+    const { promotions, loading } = useAvailablePromotions();
 
     const handleConfirmBooking = async () => {
         setIsSubmitting(true);
@@ -115,7 +115,7 @@ const BookingConfirmation = ({ booking, onConfirm, onPrevious, onVoucherSelect }
                                 </div>
                                 <div>
                                     <p className="font-semibold text-secondary-800">Ngày</p>
-                                    <p className="text-secondary-600">{formatDate(booking.date)}</p>
+                                    <p className="text-secondary-600">{formatDay(booking.date)}</p>
                                 </div>
                             </div>
 

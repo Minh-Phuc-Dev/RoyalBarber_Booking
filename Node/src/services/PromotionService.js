@@ -10,15 +10,7 @@ class PromotionService {
     static async getPromotions() {
 
         // const now = new Date();
-        const promotions = await Promotion.findAll(
-            // {
-            //     where: {
-            //         startDate: { [Op.lte]: now },
-            //         endDate: { [Op.gte]: now }
-            //     },
-            //     order: [['createdAt', 'DESC']]
-            // }
-        );
+        const promotions = await Promotion.findAll();
         return JsonResult.builder(
             HTTP_CODE.OK,
             HTTP_CODE.OK,
@@ -30,6 +22,19 @@ class PromotionService {
     static async getAvailablePromotions() {
 
         const now = new Date();
+        await Promotion.update(
+            {
+                status: PROMOTION_STATUS.EXPIRED
+            },
+            {
+                where: {
+                    endDate: { [Op.lt]: now },
+                    status: PROMOTION_STATUS.ACTIVE
+                }
+            }
+        );
+
+
         const promotions = await Promotion.findAll(
             {
                 where: {
@@ -40,10 +45,35 @@ class PromotionService {
                 order: [['createdAt', 'DESC']]
             }
         );
+
+        const overused = promotions.filter(
+            promotion => {
+                const total = promotion.getDataValue("total") || 0;
+                const usage = promotion.getDataValue("usage") || 0;
+                return usage >= total
+            }
+        )
+
+
+        for (const promotion of overused) {
+            promotion.setDataValue("status", PROMOTION_STATUS.EXPIRED);
+            await promotion.save();
+        }
+
+
         return JsonResult.builder(
             HTTP_CODE.OK,
             HTTP_CODE.OK,
-            promotions,
+            await Promotion.findAll(
+                {
+                    where: {
+                        startDate: { [Op.lte]: now },
+                        endDate: { [Op.gte]: now },
+                        status: PROMOTION_STATUS.ACTIVE
+                    },
+                    order: [['createdAt', 'DESC']]
+                }
+            ),
             HTTP_REASON.OK
         )
     }

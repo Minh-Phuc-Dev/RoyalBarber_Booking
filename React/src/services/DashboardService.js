@@ -14,6 +14,17 @@ class DashboardService {
         )
     }
 
+    static getReports(params) {
+        return requestApiHelper(
+            api.get(
+                "dashboard/reports",
+                {
+                    params
+                }
+            )
+        )
+    }
+
     static getCustomers() {
         return requestApiHelper(
             api.get(

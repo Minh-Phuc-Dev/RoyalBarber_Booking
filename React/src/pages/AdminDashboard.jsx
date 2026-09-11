@@ -3,99 +3,39 @@ import { TIME_RANGE } from "@src/enums";
 import DashboardService from "@src/services/DashboardService";
 import MediaService from "@src/services/MediaService";
 import { formatDay, formatPrice, generateKey, randomHexColor } from "@src/utils";
-import { BarChart3, Calendar, ChevronRight, ClipboardList, DollarSign, PieChart, RotateCw, Star, Users } from "lucide-react";
+import { isEmpty } from "lodash";
+import { BarChart3, Calendar, ClipboardList, DollarSign, RotateCw, Star, Users } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
-// const quickActions = [
-//     {
-//         label: "Quản Lý Dịch Vụ",
-//         desc: "Thêm, sửa, xóa dịch vụ salon",
-//         icon: <ClipboardList className="w-6 h-6 text-[#1D9BF0]" />,
-//         color: "bg-blue-50"
-//     },
-//     {
-//         label: "Quản Lý Khách Hàng",
-//         desc: "Xem danh sách và thông tin khách hàng",
-//         icon: <Users className="w-6 h-6 text-[#22C55E]" />,
-//         color: "bg-green-50"
-//     },
-//     {
-//         label: "Quản Lý Đặt Lịch",
-//         desc: "Xác nhận và quản lý lịch hẹn",
-//         icon: <Calendar className="w-6 h-6 text-[#A855F7]" />,
-//         color: "bg-purple-50"
-//     },
-//     {
-//         label: "Khuyến Mãi",
-//         desc: "Tạo và quản lý chương trình khuyến mãi",
-//         icon: <Gift className="w-6 h-6 text-[#FF8800]" />,
-//         color: "bg-orange-50"
-//     }
-// ];
-/*
-<div className="w-full">
-    <div className="mb-8">
-        <h2 className="text-lg font-semibold text-gray-900 mb-3">Thao Tác Nhanh</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {
-                quickActions.map(
-                    (action, idx) => (
-                        <div
-                            key={idx}
-                            onClick={() => handleQuickAction(action.label)}
-                            className={`rounded-2xl border border-gray-100 shadow-sm bg-white p-5 flex flex-col gap-2 ${action.color} cursor-pointer hover:shadow-md transition-shadow`}
-                        >
-                            <div className="flex items-center gap-3 mb-2">
-                                {action.icon}
-                                <span className="font-semibold text-gray-900">{action.label}</span>
-                            </div>
-                            <div className="text-sm text-gray-500">{action.desc}</div>
-                        </div>
-                    )
-                )
-            }
-        </div>
-    </div>
-    <div className="mb-8">
-        <h2 className="text-lg font-semibold text-gray-900 mb-3">Thông Báo Quan Trọng</h2>
-        <div className="flex flex-col gap-3">
-            {importantAlerts.map((alert, idx) => (
-                <div
-                    key={idx}
-                    className={`rounded-2xl p-5 flex items-center justify-between shadow-sm ${alert.color}`}
-                >
-                    <div>
-                        <div className="font-semibold flex items-center gap-2">
-                            <Bell className="w-5 h-5" />
-                            {alert.title}
-                        </div>
-                        <div className="text-gray-700 mt-1">{alert.content}</div>
-                    </div>
-                    <div className="text-xs text-gray-500">{alert.time}</div>
-                </div>
-            ))}
-        </div>
-    </div>
-</div>
-*/
 
 
 const AdminDashboard = () => {
 
-    const [time, setTime] = useState(TIME_RANGE.LATEST_7_DAY.value);
+    const [time, setTime] = useState(TIME_RANGE.DAILY.value);
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState({});
 
     const fetchData = useCallback(
         async () => {
             let params = {
-                timeRange: 7
+                timeRange: 1
             }
+
+            if (time === TIME_RANGE.LATEST_7_DAY.value) {
+                params.timeRange = 7
+            }
+
             if (time === TIME_RANGE.LATEST_30_DAY.value) {
                 params.timeRange = 30
             }
+
             if (time === TIME_RANGE.LATEST_90_DAY.value) {
                 params.timeRange = 90
+            }
+
+            if (time === TIME_RANGE.THIS_MONTH.value) {
+                const today = new Date();
+                params.timeRange = today.getDate();
             }
 
             const { success, payload } = await DashboardService.getStatistics(params);
@@ -197,26 +137,6 @@ const AdminDashboard = () => {
                             <div className="text-sm text-gray-500">Tổng Doanh Thu</div>
                         </div>
                     </div>
-                    {/* <div className="flex items-center gap-1 mt-2 text-xs font-medium">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width={24}
-                            height={24}
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="lucide lucide-arrow-up-right w-4 h-4 text-green-500"
-                            aria-hidden="true"
-                        >
-                            <path d="M7 7h10v10" />
-                            <path d="M7 17 17 7" />
-                        </svg>
-                        <span className="text-green-600">+{revenue.change}%</span>
-                        <span className="text-gray-400 ml-1">so với tháng trước</span>
-                    </div> */}
                 </div>
                 <div className="rounded-2xl border border-gray-100 shadow-sm bg-white p-6 flex flex-col gap-2">
                     <div className="flex items-center gap-3">
@@ -225,29 +145,9 @@ const AdminDashboard = () => {
                         </div>
                         <div>
                             <div className="text-2xl font-bold text-gray-900">{booking.total}</div>
-                            <div className="text-sm text-gray-500">Lượt Đặt Lịch</div>
+                            <div className="text-sm text-gray-500">Lượt Hoàn Thành</div>
                         </div>
                     </div>
-                    {/* <div className="flex items-center gap-1 mt-2 text-xs font-medium">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width={24}
-                            height={24}
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="lucide lucide-arrow-up-right w-4 h-4 text-green-500"
-                            aria-hidden="true"
-                        >
-                            <path d="M7 7h10v10" />
-                            <path d="M7 17 17 7" />
-                        </svg>
-                        <span className="text-green-600">+{booking.change}%</span>
-                        <span className="text-gray-400 ml-1">so với tháng trước</span>
-                    </div> */}
                 </div>
                 <div className="rounded-2xl border border-gray-100 shadow-sm bg-white p-6 flex flex-col gap-2">
                     <div className="flex items-center gap-3">
@@ -259,26 +159,6 @@ const AdminDashboard = () => {
                             <div className="text-sm text-gray-500">Khách Hàng Mới</div>
                         </div>
                     </div>
-                    {/* <div className="flex items-center gap-1 mt-2 text-xs font-medium">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width={24}
-                            height={24}
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="lucide lucide-arrow-up-right w-4 h-4 text-green-500"
-                            aria-hidden="true"
-                        >
-                            <path d="M7 7h10v10" />
-                            <path d="M7 17 17 7" />
-                        </svg>
-                        <span className="text-green-600">+{customer.change}%</span>
-                        <span className="text-gray-400 ml-1">so với tháng trước</span>
-                    </div> */}
                 </div>
                 <div className="rounded-2xl border border-gray-100 shadow-sm bg-white p-6 flex flex-col gap-2">
                     <div className="flex items-center gap-3">
@@ -286,30 +166,10 @@ const AdminDashboard = () => {
                             <Star className="w-7 h-7 text-[#FACC15]" />
                         </div>
                         <div>
-                            <div className="text-2xl font-bold text-gray-900">{rate.total}</div>
+                            <div className="text-2xl font-bold text-gray-900">{Number(rate.total).toFixed(1)}</div>
                             <div className="text-sm text-gray-500">Đánh Giá TB</div>
                         </div>
                     </div>
-                    {/* <div className="flex items-center gap-1 mt-2 text-xs font-medium">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width={24}
-                            height={24}
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="lucide lucide-arrow-up-right w-4 h-4 text-green-500"
-                            aria-hidden="true"
-                        >
-                            <path d="M7 7h10v10" />
-                            <path d="M7 17 17 7" />
-                        </svg>
-                        <span className="text-green-600">{rate.change}</span>
-                        <span className="text-gray-400 ml-1">so với tháng trước</span>
-                    </div> */}
                 </div>
             </div>
 
@@ -324,7 +184,11 @@ const AdminDashboard = () => {
                     </div>
                     <div className="grow flex flex-col gap-2">
                         {
-                            revenueCharts.map(
+                            isEmpty(revenueCharts) ? (
+                                <div>
+                                    <p className="text-center opacity-50">Chưa có dữ liệu!</p>
+                                </div>
+                            ) : revenueCharts.map(
                                 (item, index, values) => {
                                     const color = randomHexColor()
                                     return (
@@ -336,7 +200,7 @@ const AdminDashboard = () => {
                                                     style={{ backgroundColor: color, width: `${item.value / values.reduce((total, item) => total + item.value, 0) * 100}%` }}
                                                 />
                                             </div>
-                                            <div className="w-14 text-right text-gray-700 font-semibold">{formatPrice(item.value)}</div>
+                                            <div className="w-26 flex-none text-right text-gray-700 font-semibold">{formatPrice(item.value)}</div>
                                         </div>
                                     )
                                 }
@@ -352,14 +216,18 @@ const AdminDashboard = () => {
                 <div className="rounded-3xl bg-white shadow-[0_2px_16px_0_rgba(16,30,54,0.06)] border border-white px-8 py-7 w-full h-full flex flex-col">
                     {/* Header */}
                     <div className="flex items-center gap-2 mb-1">
-                        <PieChart className="w-6 h-6 text-[#FF8800]" />
-                        <span className="font-bold text-lg text-[#1A2233]">Lượt Đặt Lịch</span>
+                        <Calendar className="w-6 h-6 text-[#FF8800]" />
+                        <span className="font-bold text-lg text-[#1A2233]">Lượt Hoàn Thành</span>
                     </div>
                     <div className="text-gray-400 text-xs mb-4">Phân bố theo dịch vụ</div>
                     {/* Booking stats list */}
                     <div className="flex flex-col gap-4 mb-6 flex-1">
                         {
-                            bookingCharts.map(
+                            isEmpty(bookingCharts) ? (
+                                <div>
+                                    <p className="text-center opacity-50">Chưa có dữ liệu!</p>
+                                </div>
+                            ) : bookingCharts.map(
                                 (item) => {
                                     const color = randomHexColor()
                                     return (
@@ -391,10 +259,6 @@ const AdminDashboard = () => {
                             </div>
                             <div className="text-gray-400 text-xs">Tổng lượt đặt</div>
                         </div>
-                        {/* <div className="text-right">
-                            <div className="text-green-600 text-lg font-bold leading-none">+8.2%</div>
-                            <div className="text-gray-400 text-xs">So với tuần trước</div>
-                        </div> */}
                     </div>
                 </div>
             </div>
@@ -407,13 +271,14 @@ const AdminDashboard = () => {
                             <ClipboardList className="w-5 h-5 text-[#FF8800]" />
                             Lịch Hẹn Gần Đây
                         </div>
-                        <a href="#" className="text-orange-600 text-sm font-semibold hover:underline flex items-center gap-1">
-                            Xem tất cả <ChevronRight className="w-4 h-4" />
-                        </a>
                     </div>
                     <div className="flex flex-col gap-3">
                         {
-                            lastBooking.map(
+                            isEmpty(lastBooking) ? (
+                                <div>
+                                    <p className="text-center opacity-50">Chưa có dữ liệu!</p>
+                                </div>
+                            ) : lastBooking.map(
                                 (item) => (
                                     <div key={item.id} className="flex items-center gap-3 p-3 rounded-xl border border-gray-50 bg-gray-50">
                                         <img className="h-10 w-10 rounded-full object-cover" alt="" src={MediaService.getMedia(item.meta.service.image)} />
@@ -437,14 +302,14 @@ const AdminDashboard = () => {
                             <Star className="w-5 h-5 text-[#FACC15]" />
                             Dịch Vụ Hàng Đầu
                         </div>
-                        <a href="#" className="text-orange-600 text-sm font-semibold hover:underline flex items-center gap-1">
-                            Xem chi tiết <ChevronRight className="w-4 h-4" />
-                        </a>
                     </div>
                     <div className="flex flex-col gap-3">
                         {
-
-                            revenueByService.map(
+                            isEmpty(revenueByService) ? (
+                                <div>
+                                    <p className="text-center opacity-50">Chưa có dữ liệu!</p>
+                                </div>
+                            ) : revenueByService.map(
                                 (item) => (
                                     <div key={generateKey()} className="flex items-center gap-3 p-3 rounded-xl border border-gray-50 bg-gray-50">
                                         <img className="w-10 h-10 rounded-full object-cover" alt={item.label} src={MediaService.getMedia(item.image)} />

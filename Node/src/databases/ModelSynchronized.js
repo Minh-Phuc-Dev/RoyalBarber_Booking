@@ -2,6 +2,7 @@ const { USER_ROLES, USER_STATUS, SERVICE_CATEGORIES, SERVICE_STATUS, PROMOTION_T
 const { Booking } = require("@models/Booking/BookingModel");
 const { Promotion } = require("@models/Promotion/PromotionModel");
 const { Service } = require("@models/Service/ServiceModel");
+const { Transaction } = require("@models/Transaction/TransactionModel");
 const { User } = require("@models/User/UserModel");
 const { UserOTP } = require("@models/UserOTP/UserOTPModel");
 const { generateCode } = require("@utils/index");
@@ -187,7 +188,8 @@ Promise.all(
         Service.sync({ alter: true }),
         Booking.sync({ alter: true }),
         Promotion.sync({ alter: true }),
-        UserOTP.sync({ alter: true })
+        UserOTP.sync({ alter: true }),
+        Transaction.sync({ alter: true }),
     ]
 ).then(
     () => {

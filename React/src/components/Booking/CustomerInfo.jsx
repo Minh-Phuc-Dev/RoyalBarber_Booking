@@ -1,7 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { AuthenticateContext } from '@src/contexts/AuthenticateContext';
 import { PAYMENT_METHODS } from '@src/enums';
-import { ArrowRight, CheckCircle, Mail, MessageSquare, Phone, Shield, User, Wallet } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CheckCircle, Mail, MessageSquare, Phone, Shield, User, Wallet } from 'lucide-react';
 import { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { twMerge } from 'tailwind-merge';
@@ -23,7 +23,7 @@ const schema = yup.object().shape({
     agreedToTerms: yup.bool().oneOf([true], 'Vui lòng đồng ý với điều khoản sử dụng')
 });
 
-const CustomerInfo = ({ booking, onSubmit }) => {
+const CustomerInfo = ({ booking, onSubmit, handlePrevious }) => {
     const { user } = useContext(AuthenticateContext).store ?? {};
 
     const defaultValues = {
@@ -246,7 +246,7 @@ const CustomerInfo = ({ booking, onSubmit }) => {
                     </div >
 
                     {/* Submit Button */}
-                    < div className="pt-6" >
+                    < div className="pt-6 space-y-5" >
                         <button
                             type="submit"
                             disabled={!isValid}
@@ -259,6 +259,17 @@ const CustomerInfo = ({ booking, onSubmit }) => {
                         >
                             <span>Tiếp Theo: Xác Nhận Đặt Lịch</span>
                             <ArrowRight className="w-5 h-5" />
+                        </button>
+                        <button
+                            onClick={handlePrevious}
+                            disabled={false}
+                            className={twMerge(
+                                "w-full flex items-center justify-center space-x-2 px-6 py-3 rounded-lg font-semibold transition-all duration-200",
+                                "bg-white text-secondary-600 border border-gray-300 hover:bg-gray-50 hover:shadow-md"
+                            )}
+                        >
+                            <ArrowLeft className="w-5 h-5" />
+                            <span>Quay Lại</span>
                         </button>
                     </div >
                 </form >

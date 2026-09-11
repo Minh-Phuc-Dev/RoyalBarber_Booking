@@ -85,6 +85,10 @@ export const BOOKING_STATUS = {
 }
 
 export const TIME_RANGE = {
+    DAILY: {
+        name: "Hôm nay",
+        value: "DAILY",
+    },
     LATEST_7_DAY: {
         name: "7 ngày qua",
         value: "LATEST_7_DAY"
@@ -100,5 +104,28 @@ export const TIME_RANGE = {
     LATEST_90_DAY: {
         name: "3 tháng qua",
         value: "LATEST_90_DAY"
+    }
+}
+
+export const REPORT_TIME_RANGE = {
+    DAILY: {
+        name: "Hôm nay",
+        value: "DAILY"
+    },
+    MONTHLY: {
+        name: "Theo tháng",
+        value: "MONTHLY"
+    },
+    LATEST_3_MONTH: {
+        name: "3 tháng qua",
+        value: "LATEST_3_MONTH"
+    },
+    LATEST_6_MONTH: {
+        name: "6 tháng qua",
+        value: "LATEST_6_MONTH"
+    },
+    YEARLY: {
+        name: "Theo năm",
+        value: "YEARLY"
     }
 }

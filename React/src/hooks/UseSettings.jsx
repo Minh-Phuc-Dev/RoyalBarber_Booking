@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 const useSettings = () => {
-    const [settings, setSettings] = useState([]);
+    const [settings, setSettings] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 

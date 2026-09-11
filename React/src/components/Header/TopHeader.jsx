@@ -32,11 +32,6 @@ function TopHeader() {
                     </div>
                 </div>
             </div>
-            {
-                settings?.maintenanceMode ? (
-                    <Navigate to="/maintenance" />
-                ) : null
-            }
         </div>
     )
 }

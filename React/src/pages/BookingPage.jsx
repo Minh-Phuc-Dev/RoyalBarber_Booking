@@ -143,6 +143,7 @@ const BookingPage = () => {
 
         const { success, code, payload } = await BookingService.booking(body);
 
+
         if (code === 307) {
             window.location.href = payload.url;
             return
@@ -155,21 +156,6 @@ const BookingPage = () => {
 
         toast.error('Đặt lịch thất bại. Vui lòng thử lại sau.');
 
-        // setBooking(
-        //     {
-        //         service: null,
-        //         staff: null,
-        //         date: '',
-        //         time: '',
-        //         customer: {
-        //             name: '',
-        //             phone: '',
-        //             email: '',
-        //             notes: ''
-        //         }
-        //     }
-        // );
-        // setCurrentStep(1);
     };
 
     const canProceedToNext = () => {
@@ -207,6 +193,7 @@ const BookingPage = () => {
             case 3:
                 return (
                     <CustomerInfo
+                        handlePrevious={handlePrevious}
                         booking={booking}
                         onSubmit={handleCustomerSubmit}
                     />
@@ -251,7 +238,7 @@ const BookingPage = () => {
                     {renderStepContent()}
                 </div>
 
-                {/* Navigation Buttons - Only show for steps 1 and 2 */}
+
                 {(currentStep === 1 || currentStep === 2) && (
                     <div className="flex justify-between items-center mt-8">
                         <button
@@ -285,14 +272,24 @@ const BookingPage = () => {
                 )}
 
                 {/* Step 4 Navigation - Show completion status */}
-                {currentStep === 4 && (
-                    <div className="flex justify-center items-center mt-8">
-                        <div className="flex items-center space-x-2 text-green-600 bg-green-50 px-6 py-3 rounded-lg">
-                            <CheckCircle className="w-5 h-5" />
-                            <span className="font-semibold">Sẵn Sàng Xác Nhận Đặt Lịch</span>
+                {
+                    (currentStep === 4 && booking.paymentMethod === PAYMENT_METHODS.CASH) ? (
+                        <div className="flex justify-center items-center mt-8">
+                            <div className="flex items-center space-x-2 text-green-600 bg-green-50 px-6 py-3 rounded-lg">
+                                <CheckCircle className="w-5 h-5" />
+                                <span className="font-semibold">Sẵn Sàng Xác Nhận Đặt Lịch</span>
+                            </div>
                         </div>
-                    </div>
-                )}
+                    ) : (currentStep === 4 && booking.paymentMethod !== PAYMENT_METHODS.BANKING) ? (
+                        <div className="flex justify-center items-center mt-8">
+                            <div className="flex items-center space-x-2 text-yellow-600 bg-yellow-50 px-6 py-3 rounded-lg">
+                                <CheckCircle className="w-5 h-5" />
+                                <span className="font-semibold">Chuyển Đến Cổng Thanh Toán Để Hoàn Tất Đặt Lịch</span>
+                            </div>
+                        </div>
+                    ) : null
+
+                }
             </div>
         </div>
     );

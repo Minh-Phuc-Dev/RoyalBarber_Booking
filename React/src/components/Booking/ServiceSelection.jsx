@@ -1,7 +1,8 @@
 import MediaService from "@services/MediaService.js";
 import { SERVICE_CATEGORIES } from '@src/constants';
+import { USER_STATUS } from "@src/enums";
+import { useAvailableServices } from "@src/hooks/UseAvailableServices";
 import { useStaff } from '@src/hooks/UseBookingStaff';
-import { useServices } from '@src/hooks/UseServices.jsx';
 import { formatPrice } from "@utils";
 import { isEmpty } from 'lodash';
 import { CheckCircle, Crown, Heart, Palette, Sparkles, Users } from 'lucide-react';
@@ -14,7 +15,7 @@ const ServiceSelection = ({ booking, onServiceSelect, onStaffSelect }) => {
     const [searchTerm] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("");
     const [priceRange] = useState({ id: 'ALL', name: 'Tất Cả Mức Giá', min: 0, max: Infinity });
-    const { services: data, loading, error } = useServices()
+    const { services: data, loading, error } = useAvailableServices()
     const { staff, loading: loadingStaff } = useStaff();
 
     const services = useMemo(
@@ -114,7 +115,7 @@ const ServiceSelection = ({ booking, onServiceSelect, onStaffSelect }) => {
                                 Thử lại
                             </button>
                         </div>
-                    ) : (
+                    ) : services.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {
                                 services.map(
@@ -169,6 +170,8 @@ const ServiceSelection = ({ booking, onServiceSelect, onStaffSelect }) => {
                                 )
                             }
                         </div>
+                    ) : (
+                        <p className="p-5 text-center opacity-50">Hiện tại không có dịch vụ nào khả dụng.</p>
                     )
                 }
             </div>
@@ -184,7 +187,9 @@ const ServiceSelection = ({ booking, onServiceSelect, onStaffSelect }) => {
                             staff.length > 0 ? (
                                 <ul className="gap-5 grid grid-cols-1 md:grid-cols-2">
                                     {
-                                        staff.map(
+                                        staff.filter(
+                                            member => member.status === USER_STATUS.ACTIVE.value
+                                        ).map(
                                             member => (
                                                 <li key={member.id}
                                                     onClick={
@@ -202,7 +207,7 @@ const ServiceSelection = ({ booking, onServiceSelect, onStaffSelect }) => {
                                                 >
                                                     <img
                                                         src={MediaService.getMedia(member.attributes.avatar)}
-                                                        className="w-12 h-12 rounded-full"
+                                                        className="w-12 h-12 rounded-full object-cover"
                                                         alt={member.displayName}
 
                                                     />

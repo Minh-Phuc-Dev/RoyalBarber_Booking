@@ -5,6 +5,8 @@ const { Promotion } = require("@models/Promotion/PromotionModel");
 const { Service } = require("@models/Service/ServiceModel");
 const OpenAI = require("openai");
 const { Op } = require("sequelize");
+const fs = require("fs");
+const path = require("path");
 
 
 
@@ -56,14 +58,31 @@ class ChatBotService {
             }
         )
 
+        const settings = JSON.parse(
+            fs.readFileSync(
+                path.join(
+                    process.cwd(),
+                    "settings.json"
+                ),
+                { encoding: "utf-8" }
+            )
+        );
+
+
         const systemPrompts = [
             "Bạn là một trợ lý ảo cho tiệm cắt tóc Royal Barber chuyên nghiệp tại Việt Nam.",
             "Thông tin ngữ cảnh về các dịch vụ của tiệm: ",
             ...services,
             promotions.length > 0 ? "Thông tin ngữ cảnh về các chương trình khuyến mãi hiện có: " : "",
             ...promotions,
-            "Hãy trả lời các câu hỏi của khách hàng một cách ngắn gọn, súc tích và thân thiện, sử dụng markdown để định dạng nếu cần thiết.",
-            "Sử dụng tiếng Việt trong tất cả các phản hồi."
+            `Thông tin ngữ cảnh về các kênh liên hệ của tiệm: ${JSON.stringify(settings)}`,
+            "QUY TẮC BẮT BUỘC:",
+            "- Nếu câu hỏi KHÔNG liên quan đến tiệm cắt tóc (ví dụ: giá vàng, giá đất, chứng khoán, thời tiết, chính trị…), hãy trả lời đúng mẫu sau:",
+            "  'Xin lỗi, tôi là trợ lý của tiệm Royal Barber và không cung cấp thông tin về lĩnh vực này. Nếu bạn cần hỗ trợ về dịch vụ tại tiệm (bảng giá, khuyến mãi, dịch vụ...), tôi sẵn sàng giúp.'",
+            "- Không suy đoán, không trả lời lan man.",
+            "- Trả lời ngắn gọn, lịch sự, thân thiện.",
+            "- Gợi ý mã giảm giá với dịch vụ nếu có thể.",
+            "- Luôn sử dụng tiếng Việt."
         ].join("\n");
 
 

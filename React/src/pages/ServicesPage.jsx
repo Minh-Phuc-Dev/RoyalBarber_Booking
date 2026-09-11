@@ -1,7 +1,7 @@
 import ServiceCard from "@src/components/Services/ServiceCard.jsx";
 import ServiceModal from "@src/components/Services/ServiceModal.jsx";
 import { SERVICE_CATEGORIES } from "@src/constants/index.js";
-import { useServices } from "@src/hooks/UseServices.jsx";
+import { useAvailableServices } from "@src/hooks/UseAvailableServices";
 import { isEmpty } from "lodash";
 import { Crown, Filter, Heart, Palette, Search, Sparkles, Users } from 'lucide-react';
 import { useMemo, useState } from 'react';
@@ -13,7 +13,7 @@ const ServicesPage = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("");
     const [priceRange, setPriceRange] = useState({ id: 'ALL', name: 'Tất Cả Mức Giá', min: 0, max: Infinity });
-    const { services: data, loading, error, fetchServices } = useServices()
+    const { services: data, loading, error, fetchServices } = useAvailableServices()
 
     const services = useMemo(
         () => {

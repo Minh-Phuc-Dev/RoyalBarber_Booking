@@ -1,8 +1,8 @@
-import api, {requestApiHelper} from "@src/apis/index.js";
+import api, { requestApiHelper } from "@src/apis/index.js";
 
 
 class ServiceService {
-    
+
     static createService(body) {
         return requestApiHelper(
             api.post(
@@ -11,7 +11,7 @@ class ServiceService {
             )
         )
     }
-    
+
     static updateService(body) {
         return requestApiHelper(
             api.put(
@@ -20,7 +20,7 @@ class ServiceService {
             )
         )
     }
-    
+
     static getServices() {
         return requestApiHelper(
             api.get(
@@ -28,7 +28,7 @@ class ServiceService {
             )
         )
     }
-    
+
 }
 
 export default ServiceService;

@@ -357,7 +357,7 @@ const MyAppointmentsPage = () => {
                                 <p className="text-2xl font-bold text-gray-900">
                                     {
                                         formatPrice(
-                                            bookings.reduce((total, booking) => total + Number(booking.price || 0), 0)
+                                            bookings.filter(booking => [BOOKING_STATUS.COMPLETED.value].includes(booking.status)).reduce((total, booking) => total + Number(booking.price || 0), 0)
                                         )
                                     }
                                 </p>

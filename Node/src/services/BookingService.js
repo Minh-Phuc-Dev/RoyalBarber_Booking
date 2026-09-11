@@ -7,6 +7,8 @@ const { Booking } = require("src/models/Booking/BookingModel");
 const { VNPayService } = require("@services/VNPayService");
 const { Op } = require("sequelize");
 const { Promotion } = require("@models/Promotion/PromotionModel");
+const { generate30MinuteSlots } = require("@utils/index");
+const { Transaction } = require("@models/Transaction/TransactionModel");
 
 class BookingService {
 
@@ -26,19 +28,59 @@ class BookingService {
         const bookings = await Booking.findAll(
             {
                 where: {
-                    serviceId,
-                    staffId,
-                    date,
-                    status: BOOKING_STATUS.SUCCESS
+                    [Op.or]: [
+                        {
+                            serviceId,
+                            staffId,
+                            date,
+                            status: BOOKING_STATUS.SUCCESS
+                        },
+                        {
+                            staffId,
+                            date,
+                            status: BOOKING_STATUS.SUCCESS
+                        }
+
+                    ]
+
                 },
-                attributes: ['time']
+                attributes: ["time", "meta"],
+                order: [
+                    ['date', 'DESC'],
+                    ['time', 'DESC']
+                ]
             }
         )
+
+        const takenSlots = bookings.reduce(
+            (slots, booking) => {
+                let time = booking.getDataValue("time");
+                const duration = booking.getDataValue("meta")?.service?.duration || 0;
+                slots.push(time);
+                for (let i = 30; i < duration; i += 30) {
+                    const timestamp = new Date(`${date} ${time}`);
+                    timestamp.setMinutes(timestamp.getMinutes() + 30);
+                    time = `${timestamp.getHours().toString().padStart(2, '0')}:${timestamp.getMinutes().toString().padStart(2, '0')}`;
+                    slots.push(time);
+                }
+                return slots;
+
+
+            },
+            []
+        )
+
+        if (date === new Date().toISOString().slice(0, 10)) {
+            const now = new Date();
+            const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            const slots = generate30MinuteSlots("00:00", currentTime);
+            takenSlots.push(...slots);
+        }
 
         return JsonResult.builder(
             HTTP_CODE.OK,
             HTTP_CODE.OK,
-            bookings.map(booking => booking.getDataValue('time')),
+            takenSlots,
             HTTP_REASON.OK
         )
     }
@@ -68,6 +110,24 @@ class BookingService {
     static async completeBookingPayment(params) {
         const { vnp_TxnRef: bookingId } = params
 
+        //TODO: Check signature
+        const transaction = await Transaction.findOrCreate(
+            {
+                where: {
+                    bookingId: Number(params.vnp_TxnRef)
+                },
+                defaults: {
+                    bookingId: Number(params.vnp_TxnRef),
+                    amount: Number(params.vnp_Amount) / 100,
+                    provider: "VNPAY",
+                    status: params.vnp_ResponseCode === '00' ? "SUCCESS" : "FAILED",
+                    transactionDate: new Date(),
+                    meta: params
+                }
+            }
+        )
+
+
         const booking = await Booking.findByPk(Number(bookingId))
         if (!booking) {
             return JsonResult.builder(
@@ -89,7 +149,7 @@ class BookingService {
             HTTP_CODE.OK,
             booking,
             HTTP_REASON.OK,
-            params
+            transaction
         )
     }
 
@@ -138,7 +198,14 @@ class BookingService {
     }
 
     static async getAll() {
-        const bookings = await Booking.findAll()
+        const bookings = await Booking.findAll(
+            {
+                order: [
+                    ['date', 'DESC'],
+                    ['time', 'DESC']
+                ]
+            }
+        )
 
         return JsonResult.builder(
             HTTP_CODE.OK,
@@ -148,11 +215,15 @@ class BookingService {
         )
     }
 
-    static async getByUserId(userId) {
+    static async getByUserId(customerId) {
 
         const bookings = await Booking.findAll(
             {
-                where: { userId }
+                where: { customerId },
+                order: [
+                    ['date', 'DESC'],
+                    ['time', 'DESC']
+                ]
             }
         )
         return JsonResult.builder(
@@ -187,9 +258,7 @@ class BookingService {
 
     static async getStaffAppointments(params) {
         const { staffId } = params;
-        console.log(
-            [BOOKING_STATUS.SUCCESS, BOOKING_STATUS.COMPLETED]
-        );
+
 
         const bookings = await Booking.findAll(
             {
@@ -208,8 +277,8 @@ class BookingService {
                     ]
                 },
                 order: [
-                    ['date', 'ASC'],
-                    ['time', 'ASC']
+                    ['date', 'DESC'],
+                    ['time', 'DESC']
                 ]
             }
         )

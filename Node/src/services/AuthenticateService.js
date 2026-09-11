@@ -4,7 +4,7 @@ const { User } = require("src/models/User/UserModel");
 const { ExceptionBuilder } = require("src/exceptions/ExceptionBuilder");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { USER_ROLES } = require("@enums/index");
+const { USER_ROLES, USER_STATUS } = require("@enums/index");
 const nodemailer = require("nodemailer");
 const { UserOTP } = require("@models/UserOTP/UserOTPModel");
 
@@ -72,6 +72,14 @@ class AuthenticateService {
                 "Invalid credentials"
             )
 
+        }
+
+        if (user.getDataValue("status") !== USER_STATUS.ACTIVE) {
+            throw ExceptionBuilder.builder(
+                HTTP_CODE.UNAUTHORIZED,
+                HTTP_CODE.UNAUTHORIZED,
+                "User is not active"
+            )
         }
 
         // Generate JWT token

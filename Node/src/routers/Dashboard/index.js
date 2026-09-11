@@ -11,6 +11,13 @@ router.get(
 )
 
 router.get(
+    "/dashboard/reports",
+    authenticate,
+    adminAuthorize,
+    wrapperAsyncHandler(DashboardController.getReports)
+)
+
+router.get(
     "/dashboard/customers",
     authenticate,
     adminAuthorize,

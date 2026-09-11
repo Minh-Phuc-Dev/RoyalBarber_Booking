@@ -1,10 +1,10 @@
-import { useServices } from "@src/hooks/UseServices.jsx";
+import { useAvailableServices } from "@src/hooks/UseAvailableServices";
 import MediaService from "@src/services/MediaService";
 import { ArrowRight, Palette, Scissors, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const FeaturedServices = () => {
-    const { services, loading, error, fetchServices } = useServices()
+    const { services, loading, error, fetchServices } = useAvailableServices();
 
     if (loading) {
         return (
